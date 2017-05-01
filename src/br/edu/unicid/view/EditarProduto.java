@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -22,11 +23,16 @@ import br.edu.unicid.dao.ProdutoDAO;
 public class EditarProduto extends JFrame {
 
 	private JPanel LabelCat;
+	private JEditorPane editorDesc;
 	private JTextField textID;
 	private JTextField textNome;
 	private JTextField textPreco;
 	private JTextField textCat;
 	private JLabel LabelPromo;
+	private Produto produto;
+	private JRadioButton radioSim;
+	private JRadioButton radioNao;
+	private ButtonGroup bg;
 
 	/**
 	 * Launch the application.
@@ -93,7 +99,7 @@ public class EditarProduto extends JFrame {
 		LabelPromo.setBounds(10, 89, 75, 14);
 		LabelCat.add(LabelPromo);
 
-		JRadioButton radioSim = new JRadioButton("Sim");
+		radioSim = new JRadioButton("Sim");
 		radioSim.setBounds(108, 86, 57, 23);
 		LabelCat.add(radioSim);
 
@@ -102,11 +108,11 @@ public class EditarProduto extends JFrame {
 		textCat.setBounds(108, 111, 86, 20);
 		LabelCat.add(textCat);
 
-		JRadioButton radioNao = new JRadioButton("N\u00E3o");
+		radioNao = new JRadioButton("N\u00E3o");
 		radioNao.setBounds(156, 86, 57, 23);
 		LabelCat.add(radioNao);
 
-		ButtonGroup bg = new ButtonGroup();
+		bg = new ButtonGroup();
 		bg.add(radioSim);
 		bg.add(radioNao);
 
@@ -120,7 +126,7 @@ public class EditarProduto extends JFrame {
 		LabelDesc.setBounds(10, 139, 75, 14);
 		LabelCat.add(LabelDesc);
 
-		JEditorPane editorDesc = new JEditorPane();
+		editorDesc = new JEditorPane();
 		editorDesc.setBounds(108, 139, 282, 136);
 		LabelCat.add(editorDesc);
 
@@ -133,13 +139,7 @@ public class EditarProduto extends JFrame {
 		btnLimpar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				textID.setText(null);
-				textNome.setText(null);
-				textPreco.setText(null);
-				textCat.setText(null);
-				editorDesc.setText(null);
-
+				limparCampos();
 			}
 		});
 		btnLimpar.setFont(new Font("Tahoma", Font.BOLD, 14));
@@ -166,7 +166,7 @@ public class EditarProduto extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					ProdutoDAO dao = new ProdutoDAO();
-					Produto produto = new Produto();
+					produto = new Produto();
 					FiltroProduto filtro = new FiltroProduto();
 					filtro.setId(Integer.parseInt(textID.getText()));
 					produto = dao.procurarProdutoById(filtro);
@@ -183,8 +183,8 @@ public class EditarProduto extends JFrame {
 					editorDesc.setText(produto.getDescricao());
 
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Produto não existe");
 				}
 			}
 		});
@@ -192,8 +192,38 @@ public class EditarProduto extends JFrame {
 		LabelCat.add(btnBuscar);
 
 		JButton btnExcluir = new JButton("Excluir");
+		btnExcluir.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (produto.getId() == Integer.parseInt(textID.getText())) {
+					try {
+						ProdutoDAO dao = new ProdutoDAO();
+						dao.excluir(Integer.parseInt(textID.getText()));
+						limparCampos();
+						JOptionPane.showMessageDialog(null, "Produto Excluido");
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+
+				} else {
+					JOptionPane.showMessageDialog(null, "Faça a busca do produto antes excluir o mesmo !");
+				}
+			}
+		});
 		btnExcluir.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnExcluir.setBounds(108, 286, 88, 23);
 		LabelCat.add(btnExcluir);
+
+	}
+
+	public void limparCampos() {
+
+		textID.setText(null);
+		textNome.setText(null);
+		textPreco.setText(null);
+		textCat.setText(null);
+		editorDesc.setText(null);
+		bg.clearSelection();
+
 	}
 }

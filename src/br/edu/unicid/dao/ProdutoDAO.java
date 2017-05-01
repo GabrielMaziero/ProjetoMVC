@@ -75,15 +75,15 @@ public class ProdutoDAO {
 	}
 
 	// método de Deletar
-	public void excluir(Produto produto) throws Exception {
-		if (produto == null)
+	public void excluir(int id) throws Exception {
+		if (id == 0)
 			throw new Exception("O valor passado não pode ser nulo");
 
 		try {
 			String SQL = "DELETE FROM tb_produto WHERE id=?";
 
 			ps = conn.prepareStatement(SQL);
-			ps.setLong(1, produto.getId());
+			ps.setLong(1, id);
 			ps.executeUpdate();
 
 		} catch (SQLException sqle) {
