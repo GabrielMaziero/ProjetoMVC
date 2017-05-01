@@ -47,6 +47,9 @@ public class TelaPrincipal extends JFrame {
 			public void run() {
 				try {
 					TelaPrincipal frame = new TelaPrincipal();
+
+					// TODO Chamar consulta de categorias
+
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();

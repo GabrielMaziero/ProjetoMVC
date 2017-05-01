@@ -11,7 +11,7 @@ public class ConnectionFactory {
 			Class.forName("com.mysql.jdbc.Driver");
 			String url = "jdbc:mysql://localhost:3306/projetomvc";
 			String login = "root";
-			String senha = "";
+			String senha = "123456";
 
 			return DriverManager.getConnection(url, login, senha);
 		} catch (Exception e) {

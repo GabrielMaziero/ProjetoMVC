@@ -7,11 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mysql.jdbc.StringUtils;
+
 import br.edu.unicid.bean.FiltroProduto;
 import br.edu.unicid.bean.Produto;
 import br.edu.unicid.util.ConnectionFactory;
-
-import com.mysql.jdbc.StringUtils;
 
 public class ProdutoDAO {
 
@@ -91,7 +91,6 @@ public class ProdutoDAO {
 		}
 
 	}
-	// TODO CRIAR FILTRO
 
 	// método procurar produto
 	public List<Produto> procurarProdutoByFiltro(FiltroProduto filtro) throws Exception {
@@ -103,26 +102,26 @@ public class ProdutoDAO {
 			SQL.append("SELECT * FROM tb_produto where");
 
 			if (!StringUtils.isNullOrEmpty(filtro.getNome())) {
-				SQL.append("nome=? and");
+				SQL.append(" nome=? and");
 			}
 
 			if (!(filtro.getPreco() == 0)) {
-				SQL.append("preco=? and");
+				SQL.append(" preco=? and");
 			}
 
 			if (filtro.isApenasPromocao() == true) {
-				SQL.append("promocao = true and");
+				SQL.append(" promocao = true and");
 			}
 
 			if (!StringUtils.isNullOrEmpty(filtro.getCategoria())) {
-				SQL.append("categoria=? and");
+				SQL.append(" categoria=? and");
 			}
 
 			if (!StringUtils.isNullOrEmpty(filtro.getDescricao())) {
-				SQL.append("descricao=? and");
+				SQL.append(" descricao=? and");
 			}
 
-			SQL.append("id = id");
+			SQL.append(" id = id");
 
 			List<Produto> lista = new ArrayList<Produto>();
 
@@ -133,7 +132,7 @@ public class ProdutoDAO {
 			ps.setString(4, produto.getDescricao());
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				Long id = rs.getLong("id");
+				int id = rs.getInt("id");
 				String nome = rs.getString("nome");
 				String preco = rs.getString("preco");
 				boolean promocao = rs.getBoolean("promocao");
@@ -166,7 +165,7 @@ public class ProdutoDAO {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 
-				Long id = rs.getLong("id");
+				int id = rs.getInt("id");
 				String nome = rs.getString("nome");
 				String preco = rs.getString("preco");
 				boolean promocao = rs.getBoolean("promocao");
@@ -185,5 +184,35 @@ public class ProdutoDAO {
 			throw new Exception("Erro: \n" + sqle.getMessage());
 		} finally {
 		}
+	}
+
+	public Produto procurarProdutoById(FiltroProduto filtro) throws Exception {
+		if (filtro.equals(null)) {
+			throw new Exception("O valor passado não pode ser nulo");
+		}
+		try {
+			StringBuilder SQL = new StringBuilder();
+			SQL.append("SELECT * FROM tb_produto where");
+			SQL.append(" id = ?");
+
+			ps = conn.prepareStatement(SQL.toString());
+			ps.setLong(1, filtro.getId());
+			rs = ps.executeQuery();
+			if (rs.next()) {
+
+				String nome = rs.getString("nome");
+				int id = rs.getInt("id");
+				String preco = rs.getString("preco");
+				boolean promocao = rs.getBoolean("promocao");
+				String categoria = rs.getString("categoria");
+				String descricao = rs.getString("descricao");
+				produto = new Produto(id, nome, preco, promocao, categoria, descricao);
+			}
+			return produto;
+
+		} catch (SQLException sqle) {
+			throw new Exception("Erro: \n" + sqle.getMessage());
+		}
+
 	}
 }
