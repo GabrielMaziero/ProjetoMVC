@@ -131,6 +131,40 @@ public class EditarProduto extends JFrame {
 		LabelCat.add(editorDesc);
 
 		JButton btnSalvar = new JButton("Salvar");
+		btnSalvar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO
+				if (produto.getId() == Integer.parseInt(textID.getText())) {
+					try {
+						ProdutoDAO dao = new ProdutoDAO();
+						if (produto != null) {
+
+							produto.setCategoria(textCat.getText());
+							produto.setNome(textNome.getText());
+							produto.setPreco(textPreco.getText());
+							produto.setDescricao(editorDesc.getText());
+							produto.setId(Integer.parseInt(textID.getText()));
+							if (radioSim.isSelected()) {
+								produto.setPromocao(true);
+							} else {
+								produto.setPromocao(false);
+							}
+							dao.editar(produto);
+							limparCampos();
+							JOptionPane.showMessageDialog(null, "Produto Atualizado");
+						}
+					} catch (Exception e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(null, "Falha na atualização deste produto. O produto não existe");
+					}
+
+				} else {
+					JOptionPane.showMessageDialog(null, "Faça a busca do produto antes salvar o mesmo !");
+				}
+
+			}
+		});
 		btnSalvar.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnSalvar.setBounds(10, 286, 88, 23);
 		LabelCat.add(btnSalvar);
@@ -173,6 +207,7 @@ public class EditarProduto extends JFrame {
 					textCat.setText(produto.getCategoria());
 					textNome.setText(produto.getNome());
 					textPreco.setText(produto.getPreco());
+					textID.setText(Integer.toString(produto.getId()));
 					if (produto.isPromocao()) {
 						radioSim.setSelected(true);
 						radioNao.setSelected(false);

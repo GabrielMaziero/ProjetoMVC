@@ -57,7 +57,7 @@ public class ProdutoDAO {
 			throw new Exception("O valor passado não pode ser nulo");
 
 		try {
-			String SQL = "UPDATE tb_usuario SET nome=?, preco=?, promocao=?, categoria=?, descricao=? where id=?";
+			String SQL = "UPDATE tb_produto SET nome = ?, preco = ?, promocao = ?, categoria = ?, descricao = ? where id= ? ";
 
 			ps = conn.prepareStatement(SQL);
 			ps.setString(1, produto.getNome());
