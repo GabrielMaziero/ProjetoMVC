@@ -4,7 +4,13 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerAdapter;
+import java.awt.event.ContainerEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -18,10 +24,12 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
+import br.edu.unicid.dao.ProdutoDAO;
+
 public class TelaPrincipal extends JFrame {
 
 	private JPanel contentPane;
-	private JComboBox comboCat;
+	private static JComboBox comboCat;
 	private JCheckBox checkBox;
 	private JCheckBox checkBox_1;
 	private JCheckBox checkBox_2;
@@ -37,6 +45,7 @@ public class TelaPrincipal extends JFrame {
 	private JButton btnLimpar;
 	private JButton btnVoltar;
 	private JLabel lblDescrio;
+	private static List<String> listaCategorias = new ArrayList<>();
 
 	/**
 	 * Launch the application.
@@ -47,9 +56,6 @@ public class TelaPrincipal extends JFrame {
 			public void run() {
 				try {
 					TelaPrincipal frame = new TelaPrincipal();
-
-					// TODO Chamar consulta de categorias
-
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -60,8 +66,10 @@ public class TelaPrincipal extends JFrame {
 
 	/**
 	 * Create the frame.
+	 *
+	 * @throws Exception
 	 */
-	public TelaPrincipal() {
+	public TelaPrincipal() throws Exception {
 		setTitle("Produtos");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -108,6 +116,28 @@ public class TelaPrincipal extends JFrame {
 		contentPane.add(lblGenenciamentoDeProduto);
 
 		comboCat = new JComboBox();
+		comboCat.addContainerListener(new ContainerAdapter() {
+			@Override
+			public void componentAdded(ContainerEvent e) {
+			}
+		});
+		comboCat.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				ProdutoDAO dao;
+				try {
+					dao = new ProdutoDAO();
+					listaCategorias = dao.listarCategorias();
+					comboCat.addItem("..::Todas::..");
+					for (String categoria : listaCategorias) {
+						comboCat.addItem(categoria);
+					}
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		comboCat.setBounds(62, 134, 138, 20);
 		contentPane.add(comboCat);
 

@@ -215,4 +215,27 @@ public class ProdutoDAO {
 		}
 
 	}
+
+	public List<String> listarCategorias() throws Exception {
+
+		try {
+			String SQL = "SELECT * FROM tb_produto";
+			// lista vazia
+			List<String> lista = new ArrayList<String>();
+
+			ps = conn.prepareStatement(SQL);
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				String categoria = rs.getString("categoria");
+				lista.add(categoria);
+			}
+			return lista;
+
+		} catch (SQLException sqle) {
+			throw new Exception("Erro: \n" + sqle.getMessage());
+		} finally {
+		}
+	}
+
 }

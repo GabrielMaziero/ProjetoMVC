@@ -169,8 +169,13 @@ public class CadastroProduto extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				TelaPrincipal voltarPrincipal = new TelaPrincipal();
-				voltarPrincipal.setVisible(true);
+				TelaPrincipal voltarPrincipal;
+				try {
+					voltarPrincipal = new TelaPrincipal();
+					voltarPrincipal.setVisible(true);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnVoltar.setBounds(289, 257, 88, 23);

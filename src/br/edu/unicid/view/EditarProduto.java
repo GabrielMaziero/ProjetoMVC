@@ -134,7 +134,6 @@ public class EditarProduto extends JFrame {
 		btnSalvar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO
 				if (produto.getId() == Integer.parseInt(textID.getText())) {
 					try {
 						ProdutoDAO dao = new ProdutoDAO();
@@ -185,8 +184,13 @@ public class EditarProduto extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
-				TelaPrincipal voltarPrincipal = new TelaPrincipal();
-				voltarPrincipal.setVisible(true);
+				TelaPrincipal voltarPrincipal;
+				try {
+					voltarPrincipal = new TelaPrincipal();
+					voltarPrincipal.setVisible(true);
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnVoltar.setFont(new Font("Tahoma", Font.BOLD, 14));
