@@ -74,4 +74,23 @@ public class Produto {
 		this.descricao = descricao;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Produto id=");
+		builder.append(id);
+		builder.append(", nome=");
+		builder.append(nome);
+		builder.append(", preco=");
+		builder.append(preco);
+		builder.append(", promocao=");
+		builder.append(promocao);
+		builder.append(", categoria=");
+		builder.append(categoria);
+		builder.append(", descricao=");
+		builder.append(descricao);
+		builder.append("\n");
+		return builder.toString();
+	}
+
 }

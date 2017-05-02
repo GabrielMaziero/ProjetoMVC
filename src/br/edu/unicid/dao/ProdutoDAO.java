@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.mysql.jdbc.StringUtils;
 
@@ -19,6 +20,7 @@ public class ProdutoDAO {
 	private PreparedStatement ps;
 	private ResultSet rs;
 	private Produto produto;
+	private FiltroProduto filtroProduto;
 
 	public ProdutoDAO() throws Exception {
 		try {
@@ -102,34 +104,34 @@ public class ProdutoDAO {
 			SQL.append("SELECT * FROM tb_produto where");
 
 			if (!StringUtils.isNullOrEmpty(filtro.getNome())) {
-				SQL.append(" nome=? and");
-			}
-
-			if (!(filtro.getPreco() == 0)) {
-				SQL.append(" preco=? and");
+				SQL.append(" nome like ? and");
 			}
 
 			if (filtro.isApenasPromocao() == true) {
-				SQL.append(" promocao = true and");
+				SQL.append(" promocao = 1 and");
+			} else {
+				SQL.append(" promocao = 0 and");
 			}
 
-			if (!StringUtils.isNullOrEmpty(filtro.getCategoria())) {
+			if (!(filtro.getPreco() == 0)) {
+				SQL.append(" preco <=? and");
+			}
+
+			if (!StringUtils.isNullOrEmpty(filtro.getCategoria())
+					&& (!Objects.equals("..::Todas::..", filtro.getCategoria()))) {
 				SQL.append(" categoria=? and");
-			}
-
-			if (!StringUtils.isNullOrEmpty(filtro.getDescricao())) {
-				SQL.append(" descricao=? and");
 			}
 
 			SQL.append(" id = id");
 
 			List<Produto> lista = new ArrayList<Produto>();
 
+			// TODO, incluir na consulta apenas os campos que serão utilizados e
+			// Melhorar Apresentação na tela
 			ps = conn.prepareStatement(SQL.toString());
-			ps.setString(1, produto.getNome());
-			ps.setString(2, produto.getPreco());
-			ps.setString(3, produto.getCategoria());
-			ps.setString(4, produto.getDescricao());
+			ps.setString(1, '%' + filtro.getNome() + '%');
+			ps.setDouble(2, filtro.getPreco());
+			ps.setString(3, filtro.getCategoria());
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt("id");
