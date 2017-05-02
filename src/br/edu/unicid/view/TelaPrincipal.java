@@ -20,8 +20,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
 
 import br.edu.unicid.bean.FiltroProduto;
@@ -40,13 +41,15 @@ public class TelaPrincipal extends JFrame {
 	private JTextField textNome;
 	private JLabel lblPromo;
 	private JLabel lblNome;
-	private JTextPane textDesc;
+	private JTextArea textDesc;
 	private JButton btnBuscar;
 	private JButton btnLimpar;
 	private JButton btnVoltar;
 	private JLabel lblDescrio;
 	private ButtonGroup bg;
 	private static List<String> listaCategorias = new ArrayList<>();
+	private JScrollPane scroll;
+	private JScrollPane scrollPane;
 
 	/**
 	 * Launch the application.
@@ -185,7 +188,8 @@ public class TelaPrincipal extends JFrame {
 		lblNome.setBounds(62, 221, 44, 16);
 		contentPane.add(lblNome);
 
-		textDesc = new JTextPane();
+		textDesc = new JTextArea();
+		textDesc.setLineWrap(true);
 		textDesc.setEditable(false);
 		textDesc.setBounds(114, 252, 268, 186);
 		contentPane.add(textDesc);
@@ -248,6 +252,12 @@ public class TelaPrincipal extends JFrame {
 		lblDescrio.setFont(new Font("Tahoma", Font.BOLD, 13));
 		lblDescrio.setBounds(31, 250, 75, 14);
 		contentPane.add(lblDescrio);
+
+		scroll = new JScrollPane(textDesc);
+		scroll.setBounds(111, 251, 271, 186);
+		getContentPane().add(scroll);
+		contentPane.add(scroll);
+
 	}
 
 	public void limparCampos() {

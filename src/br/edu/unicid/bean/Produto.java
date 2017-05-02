@@ -77,19 +77,19 @@ public class Produto {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Produto id=");
+		builder.append("id=");
 		builder.append(id);
-		builder.append(", nome=");
+		builder.append(", \nnome=");
 		builder.append(nome);
-		builder.append(", preco=");
+		builder.append(", \npreco=");
 		builder.append(preco);
-		builder.append(", promocao=");
+		builder.append(", \npromocao=");
 		builder.append(promocao);
-		builder.append(", categoria=");
+		builder.append(", \ncategoria=");
 		builder.append(categoria);
-		builder.append(", descricao=");
+		builder.append(", \ndescricao=");
 		builder.append(descricao);
-		builder.append("\n");
+		builder.append("\n\n");
 		return builder.toString();
 	}
 

@@ -103,14 +103,14 @@ public class ProdutoDAO {
 			StringBuilder SQL = new StringBuilder();
 			SQL.append("SELECT * FROM tb_produto where");
 
-			if (!StringUtils.isNullOrEmpty(filtro.getNome())) {
-				SQL.append(" nome like ? and");
-			}
-
 			if (filtro.isApenasPromocao() == true) {
 				SQL.append(" promocao = 1 and");
 			} else {
 				SQL.append(" promocao = 0 and");
+			}
+
+			if (!StringUtils.isNullOrEmpty(filtro.getNome())) {
+				SQL.append(" nome like ? and");
 			}
 
 			if (!(filtro.getPreco() == 0)) {
@@ -125,13 +125,20 @@ public class ProdutoDAO {
 			SQL.append(" id = id");
 
 			List<Produto> lista = new ArrayList<Produto>();
-
-			// TODO, incluir na consulta apenas os campos que serão utilizados e
-			// Melhorar Apresentação na tela
 			ps = conn.prepareStatement(SQL.toString());
-			ps.setString(1, '%' + filtro.getNome() + '%');
-			ps.setDouble(2, filtro.getPreco());
-			ps.setString(3, filtro.getCategoria());
+
+			int n = 0;
+
+			if (!StringUtils.isNullOrEmpty(filtro.getNome())) {
+				ps.setString(n + 1, '%' + filtro.getNome() + '%');
+			}
+			if (!(filtro.getPreco() == 0)) {
+				ps.setDouble(n + 1, filtro.getPreco());
+			}
+			if (!StringUtils.isNullOrEmpty(filtro.getCategoria())
+					&& (!Objects.equals("..::Todas::..", filtro.getCategoria()))) {
+				ps.setString(n + 1, filtro.getCategoria());
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				int id = rs.getInt("id");
