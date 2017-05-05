@@ -6,12 +6,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import com.mysql.jdbc.StringUtils;
 
 import br.edu.unicid.bean.FiltroProduto;
 import br.edu.unicid.bean.Produto;
 import br.edu.unicid.util.ConnectionFactory;
-
-import com.mysql.jdbc.StringUtils;
 
 public class ProdutoDAO {
 
@@ -19,6 +20,7 @@ public class ProdutoDAO {
 	private PreparedStatement ps;
 	private ResultSet rs;
 	private Produto produto;
+	private FiltroProduto filtroProduto;
 
 	public ProdutoDAO() throws Exception {
 		try {
@@ -57,7 +59,7 @@ public class ProdutoDAO {
 			throw new Exception("O valor passado não pode ser nulo");
 
 		try {
-			String SQL = "UPDATE tb_usuario SET nome=?, preco=?, promocao=?, categoria=?, descricao=? where id=?";
+			String SQL = "UPDATE tb_produto SET nome = ?, preco = ?, promocao = ?, categoria = ?, descricao = ? where id= ? ";
 
 			ps = conn.prepareStatement(SQL);
 			ps.setString(1, produto.getNome());
@@ -75,15 +77,15 @@ public class ProdutoDAO {
 	}
 
 	// método de Deletar
-	public void excluir(Produto produto) throws Exception {
-		if (produto == null)
+	public void excluir(int id) throws Exception {
+		if (id == 0)
 			throw new Exception("O valor passado não pode ser nulo");
 
 		try {
 			String SQL = "DELETE FROM tb_produto WHERE id=?";
 
 			ps = conn.prepareStatement(SQL);
-			ps.setLong(1, produto.getId());
+			ps.setLong(1, id);
 			ps.executeUpdate();
 
 		} catch (SQLException sqle) {
@@ -91,7 +93,6 @@ public class ProdutoDAO {
 		}
 
 	}
-	// TODO CRIAR FILTRO
 
 	// método procurar produto
 	public List<Produto> procurarProdutoByFiltro(FiltroProduto filtro) throws Exception {
@@ -102,38 +103,45 @@ public class ProdutoDAO {
 			StringBuilder SQL = new StringBuilder();
 			SQL.append("SELECT * FROM tb_produto where");
 
+			if (filtro.isApenasPromocao() == true) {
+				SQL.append(" promocao = 1 and");
+			} else {
+				SQL.append(" promocao = 0 and");
+			}
+
 			if (!StringUtils.isNullOrEmpty(filtro.getNome())) {
-				SQL.append("nome=? and");
+				SQL.append(" nome like ? and");
 			}
 
 			if (!(filtro.getPreco() == 0)) {
-				SQL.append("preco=? and");
+				SQL.append(" preco <=? and");
 			}
 
-			if (filtro.isApenasPromocao() == true) {
-				SQL.append("promocao = true and");
+			if (!StringUtils.isNullOrEmpty(filtro.getCategoria())
+					&& (!Objects.equals("..::Todas::..", filtro.getCategoria()))) {
+				SQL.append(" categoria=? and");
 			}
 
-			if (!StringUtils.isNullOrEmpty(filtro.getCategoria())) {
-				SQL.append("categoria=? and");
-			}
-
-			if (!StringUtils.isNullOrEmpty(filtro.getDescricao())) {
-				SQL.append("descricao=? and");
-			}
-
-			SQL.append("id = id");
+			SQL.append(" id = id");
 
 			List<Produto> lista = new ArrayList<Produto>();
-
 			ps = conn.prepareStatement(SQL.toString());
-			ps.setString(1, produto.getNome());
-			ps.setString(2, produto.getPreco());
-			ps.setString(3, produto.getCategoria());
-			ps.setString(4, produto.getDescricao());
+
+			int n = 0;
+
+			if (!StringUtils.isNullOrEmpty(filtro.getNome())) {
+				ps.setString(n + 1, '%' + filtro.getNome() + '%');
+			}
+			if (!(filtro.getPreco() == 0)) {
+				ps.setDouble(n + 1, filtro.getPreco());
+			}
+			if (!StringUtils.isNullOrEmpty(filtro.getCategoria())
+					&& (!Objects.equals("..::Todas::..", filtro.getCategoria()))) {
+				ps.setString(n + 1, filtro.getCategoria());
+			}
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				Long id = rs.getLong("id");
+				int id = rs.getInt("id");
 				String nome = rs.getString("nome");
 				String preco = rs.getString("preco");
 				boolean promocao = rs.getBoolean("promocao");
@@ -166,7 +174,7 @@ public class ProdutoDAO {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 
-				Long id = rs.getLong("id");
+				int id = rs.getInt("id");
 				String nome = rs.getString("nome");
 				String preco = rs.getString("preco");
 				boolean promocao = rs.getBoolean("promocao");
@@ -186,4 +194,57 @@ public class ProdutoDAO {
 		} finally {
 		}
 	}
+
+	public Produto procurarProdutoById(FiltroProduto filtro) throws Exception {
+		if (filtro.equals(null)) {
+			throw new Exception("O valor passado não pode ser nulo");
+		}
+		try {
+			StringBuilder SQL = new StringBuilder();
+			SQL.append("SELECT * FROM tb_produto where");
+			SQL.append(" id = ?");
+
+			ps = conn.prepareStatement(SQL.toString());
+			ps.setLong(1, filtro.getId());
+			rs = ps.executeQuery();
+			if (rs.next()) {
+
+				String nome = rs.getString("nome");
+				int id = rs.getInt("id");
+				String preco = rs.getString("preco");
+				boolean promocao = rs.getBoolean("promocao");
+				String categoria = rs.getString("categoria");
+				String descricao = rs.getString("descricao");
+				produto = new Produto(id, nome, preco, promocao, categoria, descricao);
+			}
+			return produto;
+
+		} catch (SQLException sqle) {
+			throw new Exception("Erro: \n" + sqle.getMessage());
+		}
+
+	}
+
+	public List<String> listarCategorias() throws Exception {
+
+		try {
+			String SQL = "SELECT * FROM tb_produto";
+			// lista vazia
+			List<String> lista = new ArrayList<String>();
+
+			ps = conn.prepareStatement(SQL);
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				String categoria = rs.getString("categoria");
+				lista.add(categoria);
+			}
+			return lista;
+
+		} catch (SQLException sqle) {
+			throw new Exception("Erro: \n" + sqle.getMessage());
+		} finally {
+		}
+	}
+
 }

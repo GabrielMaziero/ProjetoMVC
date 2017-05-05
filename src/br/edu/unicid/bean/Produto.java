@@ -3,7 +3,7 @@ package br.edu.unicid.bean;
 public class Produto {
 
 	// atributos
-	private Long id;
+	private int id;
 	private String nome;
 	private String preco;
 	private boolean promocao;
@@ -16,7 +16,7 @@ public class Produto {
 	}
 
 	// contrutor com campos
-	public Produto(Long id, String nome, String preco, boolean promocao, String categoria, String descricao) {
+	public Produto(int id, String nome, String preco, boolean promocao, String categoria, String descricao) {
 		super();
 		this.id = id;
 		this.nome = nome;
@@ -26,11 +26,11 @@ public class Produto {
 		this.descricao = descricao;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -72,6 +72,25 @@ public class Produto {
 
 	public void setDescricao(String descricao) {
 		this.descricao = descricao;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("id=");
+		builder.append(id);
+		builder.append(", \nnome=");
+		builder.append(nome);
+		builder.append(", \npreco=");
+		builder.append(preco);
+		builder.append(", \npromocao=");
+		builder.append(promocao);
+		builder.append(", \ncategoria=");
+		builder.append(categoria);
+		builder.append(", \ndescricao=");
+		builder.append(descricao);
+		builder.append("\n\n");
+		return builder.toString();
 	}
 
 }

@@ -3,7 +3,7 @@ package br.edu.unicid.bean;
 public class FiltroProduto {
 
 	// atributos
-	private Long id;
+	private int id;
 	private String nome;
 	private double preco;
 	private boolean apenasPromocao;
@@ -16,7 +16,7 @@ public class FiltroProduto {
 	}
 
 	// contrutor com campos
-	public FiltroProduto(Long id, String nome, double preco, boolean apenasPromocao, String categoria,
+	public FiltroProduto(int id, String nome, double preco, boolean apenasPromocao, String categoria,
 			String descricao) {
 		super();
 		this.id = id;
@@ -27,11 +27,11 @@ public class FiltroProduto {
 		this.descricao = descricao;
 	}
 
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
